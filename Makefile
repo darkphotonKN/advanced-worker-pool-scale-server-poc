@@ -1,4 +1,7 @@
-.PHONY: build run dev test migrate-up migrate-down migrate-create
+-include .env
+export 
+
+.PHONY: build run dev test migrate-up migrate-down migrate-create seed
 
 # Build the application
 build:
@@ -7,6 +10,10 @@ build:
 # Run the application
 run:
 	go run cmd/main.go
+
+# Seed the database with test data
+seed:
+	go run cmd/seed/main.go
 
 # Run with hot reload (requires air)
 dev:
