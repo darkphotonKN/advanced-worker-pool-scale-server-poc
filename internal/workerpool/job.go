@@ -14,6 +14,7 @@ import (
 * the interface abstraction of what it means to be a job, to be able to execute the task it carries
 **/
 type JobProcessor interface {
+	Execute() (interface{}, error)
 }
 
 /*

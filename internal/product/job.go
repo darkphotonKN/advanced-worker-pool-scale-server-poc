@@ -1,14 +1,27 @@
 package product
 
-import "github.com/darkphotonKN/advanced-worker-pool-scale-server-poc/internal/workerpool"
+import (
+	"context"
+	"time"
 
-type Job struct {
-	workerpool.Job
+	"github.com/darkphotonKN/advanced-worker-pool-scale-server-poc/internal/model"
+	"github.com/darkphotonKN/advanced-worker-pool-scale-server-poc/internal/workerpool"
+	"github.com/google/uuid"
+)
+
+type ProductJob struct {
+	*workerpool.Job
 	service Service
 }
 
 func NewJob(service Service) workerpool.JobProcessor {
-	return &Job{
+	return &ProductJob{
+		Job: workerpool.Job{
+			ID:        uuid.New(),
+			ResultCh:  make(chan model.Result),
+			CreatedAt: time.Now(),
+			Context:   context.Background(),
+		},
 		service: service,
 	}
 }
