@@ -3,6 +3,7 @@ package workerpool
 import (
 	"sync"
 
+	"github.com/darkphotonKN/advanced-worker-pool-scale-server-poc/internal/model"
 	"github.com/darkphotonKN/advanced-worker-pool-scale-server-poc/internal/product"
 )
 
@@ -16,7 +17,6 @@ type Pool struct {
 }
 
 const (
-	maxWorkerCount   int = 20
 	bufferMultiplier int = 2
 )
 
@@ -26,6 +26,7 @@ const (
 * the pool, and at least as part of the goal, the application.
 **/
 func NewPool() *Pool {
+	maxWorkerCount := 20 // TODO: update to a dynamic count based on CPU cycles
 	safeBufferSize := maxWorkerCount * bufferMultiplier
 
 	newPool := Pool{
@@ -48,14 +49,20 @@ func NewPool() *Pool {
 **/
 func (p *Pool) worker() {
 	for job := range p.jobs {
-		result, err := job.Execute("placeholder")
+		result, err := job.Execute()
 
 		// parse incoming request and pass it to work on the correct service and method
 
 		if err != nil {
-			job.ResultCh <- err
+			job.ResultCh <- model.Result{
+				Result: nil,
+				Error:  &err,
+			}
 		}
 
-		job.ResultCh <- result
+		job.ResultCh <- model.Result{
+			Result: result,
+			Error:  nil,
+		}
 	}
 }
