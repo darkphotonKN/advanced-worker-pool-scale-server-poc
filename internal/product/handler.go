@@ -2,13 +2,10 @@ package product
 
 import (
 	"context"
-
 	"github.com/gin-gonic/gin"
 )
 
-// ServiceInterface defined where it's consumed (in handler)
-// Handler decides what methods it needs from the service
-type ServiceInterface interface {
+type Service interface {
 	Create(ctx context.Context, item *Product) error
 	GetByID(ctx context.Context, id int) (*Product, error)
 	List(ctx context.Context) ([]Product, error)
@@ -17,11 +14,11 @@ type ServiceInterface interface {
 }
 
 type Handler struct {
-	service ServiceInterface
+	service Service
 }
 
-// NewHandler accepts the interface it defined
-func NewHandler(service ServiceInterface) *Handler {
+// NewHandler accepts the Service interface
+func NewHandler(service Service) *Handler {
 	return &Handler{service: service}
 }
 
@@ -44,4 +41,3 @@ func (h *Handler) Update(c *gin.Context) {
 func (h *Handler) Delete(c *gin.Context) {
 	// Implementation left blank as requested
 }
-

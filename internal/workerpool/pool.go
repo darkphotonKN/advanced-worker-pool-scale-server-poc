@@ -1,31 +1,45 @@
 package workerpool
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/darkphotonKN/advanced-worker-pool-scale-server-poc/internal/product"
 )
 
 type Pool struct {
-	jobs    chan Job // the channel of jobs that workers pull from
-	workers int
-	wg      sync.WaitGroup // for synchronizing workers
+	jobs        chan Job // the channel of jobs that workers pull from
+	noOfWorkers int
+	wg          sync.WaitGroup // for synchronizing workers
 
 	// DI of services the worker has to interface with
-	productService product.ServiceInterface
+	productService product.Service
 }
 
-const maxWorker = 200
+const (
+	maxWorkerCount   int = 20
+	bufferMultiplier int = 2
+)
 
 /**
 * initializes all workers and goroutines from the get-go.
 * this keeps all workers available for the entire lifetime of
 * the pool, and at least as part of the goal, the application.
 **/
-func NewPool() {
-	// start all the worker goroutines
+func NewPool() *Pool {
+	safeBufferSize := maxWorkerCount * bufferMultiplier
 
+	newPool := Pool{
+		jobs:        make(chan Job, safeBufferSize),
+		noOfWorkers: maxWorkerCount,
+		wg:          sync.WaitGroup{},
+	}
+
+	// start all the worker goroutines
+	for i := 0; i < maxWorkerCount; i++ {
+		go newPool.worker()
+	}
+
+	return &newPool
 }
 
 /**
@@ -34,7 +48,7 @@ func NewPool() {
 **/
 func (p *Pool) worker() {
 	for job := range p.jobs {
-		result, err := job.Execute()
+		result, err := job.Execute("placeholder")
 
 		// parse incoming request and pass it to work on the correct service and method
 
@@ -44,31 +58,4 @@ func (p *Pool) worker() {
 
 		job.ResultCh <- result
 	}
-
-}
-
-func (p *Pool) ListenForJobs() {
-	go func() {
-		for {
-			select {
-			case job := <-p.jobs:
-				p.WorkOnJob(job)
-
-			}
-		}
-
-	}()
-}
-
-func (p *Pool) AddWorker(job Job) error {
-	return nil
-}
-
-func (p *Pool) WorkOnJob(job Job) error {
-	// add a worker if there is still worker capacity available
-	if maxWorker >= p.workers {
-		return fmt.Errorf("Workers are all exhausted.")
-	}
-
-	return p.AddWorker(job)
 }
