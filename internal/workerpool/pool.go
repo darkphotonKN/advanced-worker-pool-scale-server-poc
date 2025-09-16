@@ -4,16 +4,12 @@ import (
 	"sync"
 
 	"github.com/darkphotonKN/advanced-worker-pool-scale-server-poc/internal/model"
-	"github.com/darkphotonKN/advanced-worker-pool-scale-server-poc/internal/product"
 )
 
 type Pool struct {
 	jobs        chan Job // the channel of jobs that workers pull from
 	noOfWorkers int
 	wg          sync.WaitGroup // for synchronizing workers
-
-	// DI of services the worker has to interface with
-	productService product.Service
 }
 
 const (
