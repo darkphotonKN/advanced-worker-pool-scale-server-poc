@@ -2,6 +2,7 @@ package product
 
 import (
 	"context"
+	"fmt"
 )
 
 type Repository interface {
@@ -23,26 +24,23 @@ func NewService(repo Repository) *service {
 }
 
 func (s *service) Create(ctx context.Context, item *Product) error {
-	// Implementation left blank as requested
+
+	fmt.Printf("creating product placeholder...")
 	return nil
 }
 
 func (s *service) GetByID(ctx context.Context, id int) (*Product, error) {
-	// Implementation left blank as requested
 	return nil, nil
 }
 
 func (s *service) List(ctx context.Context) ([]Product, error) {
-	// Implementation left blank as requested
 	return nil, nil
 }
 
 func (s *service) Update(ctx context.Context, id int, item *Product) error {
-	// Implementation left blank as requested
 	return nil
 }
 
 func (s *service) Delete(ctx context.Context, id int) error {
-	// Implementation left blank as requested
 	return nil
 }

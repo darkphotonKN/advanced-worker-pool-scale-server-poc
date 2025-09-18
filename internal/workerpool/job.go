@@ -21,14 +21,20 @@ type JobProcessor interface {
 * Baseline job type that would be embedded by all other concrete jobs
 **/
 type Job struct {
-	ID        uuid.UUID
-	ResultCh  chan model.Result
+	ID       uuid.UUID
+	ResultCh chan model.Result
+
+	// name of the operation (corresponding method) to run from that domain's service
+	Name string
+
+	// the payload for carrying out the job
+	Data      interface{}
 	CreatedAt time.Time
 	Context   context.Context
 }
 
 /**
-* What workers should run, tells that what to do.
+* What workers should run, tells that worker what to do.
 **/
 func (j *Job) Execute() (interface{}, error) {
 	fmt.Printf("\nJob Executed\n\n")

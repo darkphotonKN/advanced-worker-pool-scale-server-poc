@@ -2,6 +2,8 @@ package product
 
 import (
 	"context"
+
+	"github.com/darkphotonKN/advanced-worker-pool-scale-server-poc/internal/workerpool"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,6 +16,7 @@ type Service interface {
 }
 
 type Handler struct {
+	pool    workerpool.Pool
 	service Service
 }
 
@@ -23,7 +26,9 @@ func NewHandler(service Service) *Handler {
 }
 
 func (h *Handler) Create(c *gin.Context) {
-	// Implementation left blank as requested
+	// queue into job channel to queue work
+	h.pool.Submit(&ProductJob{}) // TODO: empty for testing
+
 }
 
 func (h *Handler) Get(c *gin.Context) {

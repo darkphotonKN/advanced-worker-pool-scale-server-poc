@@ -10,7 +10,8 @@ import (
 )
 
 type ProductJob struct {
-	*workerpool.Job
+	workerpool.Job
+	Data    *Product
 	service Service
 }
 
@@ -24,4 +25,13 @@ func NewJob(service Service) workerpool.JobProcessor {
 		},
 		service: service,
 	}
+}
+
+func (j *ProductJob) Execute() (interface{}, error) {
+	switch j.Name {
+	case "create":
+		j.service.Create(j.Context, j.Data)
+	}
+
+	return nil, nil
 }
