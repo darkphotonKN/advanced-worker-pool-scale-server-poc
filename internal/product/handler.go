@@ -31,6 +31,11 @@ func (h *Handler) Create(c *gin.Context) {
 
 	// queue into job channel to queue work
 	h.pool.Submit(job)
+
+	// listen for result after business logic is done from service.go
+	result := <-job.GetResultCh()
+
+	c.JSON(200, result)
 }
 
 func (h *Handler) Get(c *gin.Context) {
