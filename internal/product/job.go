@@ -12,14 +12,23 @@ import (
 type ProductJob struct {
 	workerpool.Job
 	Data    *Product
-	service Service
+	service JobService
 }
 
-func NewJob(service Service) workerpool.JobProcessor {
+type JobService interface {
+	Create(ctx context.Context, item *Product) error
+	GetByID(ctx context.Context, id int) (*Product, error)
+	List(ctx context.Context) ([]Product, error)
+	Update(ctx context.Context, id int, item *Product) error
+	Delete(ctx context.Context, id int) error
+}
+
+func NewJob(service JobService, name string) workerpool.JobProcessor {
 	return &ProductJob{
 		Job: workerpool.Job{
 			ID:        uuid.New(),
 			ResultCh:  make(chan model.Result),
+			Name:      name,
 			CreatedAt: time.Now(),
 			Context:   context.Background(),
 		},

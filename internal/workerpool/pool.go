@@ -36,7 +36,7 @@ func NewPool() *Pool {
 
 	// start all the worker goroutines
 	for i := 0; i < maxWorkerCount; i++ {
-		go newPool.worker()
+		go newPool.worker(i)
 	}
 
 	return &newPool
@@ -46,7 +46,8 @@ func NewPool() *Pool {
 * Primary definition of a worker, the method that carries out the work sent to the
 * jobs channel.
 **/
-func (p *Pool) worker() {
+func (p *Pool) worker(workerNo int) {
+	fmt.Println("Starting worker: ", workerNo)
 	for job := range p.jobs {
 		result, err := job.Execute()
 

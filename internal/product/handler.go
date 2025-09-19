@@ -7,7 +7,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Service interface {
+type Handler struct {
+	pool    *workerpool.Pool
+	service HandlerService
+}
+
+type HandlerService interface {
 	Create(ctx context.Context, item *Product) error
 	GetByID(ctx context.Context, id int) (*Product, error)
 	List(ctx context.Context) ([]Product, error)
@@ -15,20 +20,17 @@ type Service interface {
 	Delete(ctx context.Context, id int) error
 }
 
-type Handler struct {
-	pool    workerpool.Pool
-	service Service
-}
-
 // NewHandler accepts the Service interface
-func NewHandler(service Service) *Handler {
-	return &Handler{service: service}
+func NewHandler(pool *workerpool.Pool, service HandlerService) *Handler {
+	return &Handler{pool: pool, service: service}
+
 }
 
 func (h *Handler) Create(c *gin.Context) {
-	// queue into job channel to queue work
-	h.pool.Submit(&ProductJob{}) // TODO: empty for testing
+	job := NewJob(h.service, "create")
 
+	// queue into job channel to queue work
+	h.pool.Submit(job)
 }
 
 func (h *Handler) Get(c *gin.Context) {

@@ -4,21 +4,21 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 
-	"github.com/darkphotonKN/advanced-worker-pool-scale-server-poc/internal/product"
 	"github.com/darkphotonKN/advanced-worker-pool-scale-server-poc/internal/middleware"
+	"github.com/darkphotonKN/advanced-worker-pool-scale-server-poc/internal/product"
+	"github.com/darkphotonKN/advanced-worker-pool-scale-server-poc/internal/workerpool"
 )
 
 func SetupRoutes(db *sqlx.DB) *gin.Engine {
 	router := gin.Default()
 
-	// Initialize repositories
-	productRepo := product.NewRepository(db)
+	// initalize workerpool
+	pool := workerpool.NewPool()
 
-	// Initialize services with dependency injection
+	productRepo := product.NewRepository(db)
 	productService := product.NewService(productRepo)
 
-	// Initialize handlers
-	productHandler := product.NewHandler(productService)
+	productHandler := product.NewHandler(pool, productService)
 
 	// API routes
 	api := router.Group("/api")
@@ -42,3 +42,4 @@ func SetupRoutes(db *sqlx.DB) *gin.Engine {
 
 	return router
 }
+

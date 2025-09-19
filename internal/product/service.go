@@ -24,7 +24,6 @@ func NewService(repo Repository) *service {
 }
 
 func (s *service) Create(ctx context.Context, item *Product) error {
-
 	fmt.Printf("creating product placeholder...")
 	return nil
 }
