@@ -15,6 +15,7 @@ import (
 **/
 type JobProcessor interface {
 	Execute() (interface{}, error)
+	GetResultCh() chan model.Result
 }
 
 /*
@@ -46,4 +47,11 @@ func (j *Job) Execute() (interface{}, error) {
 **/
 func (j *Job) HandleResult(data interface{}, err error) (interface{}, error) {
 	return nil, nil
+}
+
+/**
+* Provides cleaner access to the ResultCh since we are using an interface abstraction.
+**/
+func (j *Job) GetResultCh() chan model.Result {
+	return j.ResultCh
 }

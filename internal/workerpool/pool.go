@@ -52,15 +52,16 @@ func (p *Pool) worker(workerNo int) {
 		result, err := job.Execute()
 
 		// parse incoming request and pass it to work on the correct service and method
+		jobResultCh := job.GetResultCh()
 
 		if err != nil {
-			job.(*Job).ResultCh <- model.Result{
+			jobResultCh <- model.Result{
 				Result: nil,
 				Error:  &err,
 			}
 		}
 
-		job.(*Job).ResultCh <- model.Result{
+		jobResultCh <- model.Result{
 			Result: result,
 			Error:  nil,
 		}
