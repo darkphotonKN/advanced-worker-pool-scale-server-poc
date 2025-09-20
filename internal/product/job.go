@@ -2,6 +2,7 @@ package product
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/darkphotonKN/advanced-worker-pool-scale-server-poc/internal/model"
@@ -37,6 +38,8 @@ func NewJob(service JobService, name string) workerpool.JobProcessor {
 }
 
 func (j *ProductJob) Execute() (interface{}, error) {
+	fmt.Printf("data: %+v\n", j.Data)
+
 	switch j.Name {
 	case "create":
 		j.service.Create(j.Context, j.Data)

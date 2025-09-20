@@ -23,8 +23,8 @@ func NewService(repo Repository) *service {
 	return &service{repo: repo}
 }
 
-func (s *service) Create(ctx context.Context, item *Product) error {
-	fmt.Printf("creating product placeholder...")
+func (s *service) Create(ctx context.Context, product *Product) error {
+	fmt.Printf("\nRecieved payload from worker: %+v\n\n", product)
 	return nil
 }
 

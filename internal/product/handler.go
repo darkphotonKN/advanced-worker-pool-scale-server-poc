@@ -2,6 +2,7 @@ package product
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/darkphotonKN/advanced-worker-pool-scale-server-poc/internal/workerpool"
 	"github.com/gin-gonic/gin"
@@ -20,14 +21,20 @@ type HandlerService interface {
 	Delete(ctx context.Context, id int) error
 }
 
-// NewHandler accepts the Service interface
 func NewHandler(pool *workerpool.Pool, service HandlerService) *Handler {
 	return &Handler{pool: pool, service: service}
-
 }
 
 func (h *Handler) Create(c *gin.Context) {
+	var product Product
+
+	if err := c.ShouldBindJSON(&product); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	job := NewJob(h.service, "create")
+	job.SetData(&product)
 
 	// queue into job channel to queue work
 	h.pool.Submit(job)

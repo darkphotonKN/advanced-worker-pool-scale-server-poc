@@ -2,6 +2,7 @@ package workerpool
 
 import (
 	"fmt"
+	"runtime"
 	"sync"
 	"time"
 
@@ -24,8 +25,7 @@ const (
 * the pool, and at least as part of the goal, the application.
 **/
 func NewPool() *Pool {
-	// TODO: update to a dynamic count based on CPU cycles
-	maxWorkerCount := 20
+	maxWorkerCount := runtime.NumCPU() * 2
 	safeBufferSize := maxWorkerCount * bufferMultiplier
 
 	newPool := Pool{

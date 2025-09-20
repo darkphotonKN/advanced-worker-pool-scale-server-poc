@@ -39,3 +39,4 @@ func (r *repository) Delete(ctx context.Context, id int) error {
 	// Implementation left blank as requested
 	return nil
 }
+
