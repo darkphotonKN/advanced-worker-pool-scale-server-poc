@@ -16,7 +16,22 @@ func NewRepository(db *sqlx.DB) *repository {
 }
 
 func (r *repository) Create(ctx context.Context, item *Product) error {
-	// Implementation left blank as requested
+	query := `
+		INSERT INTO products (name, description, price, stock, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, NOW(), NOW())
+	`
+
+	_, err := r.db.ExecContext(ctx, query,
+		item.Name,
+		item.Description,
+		item.Price,
+		item.Stock,
+	)
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -39,4 +54,3 @@ func (r *repository) Delete(ctx context.Context, id int) error {
 	// Implementation left blank as requested
 	return nil
 }
-

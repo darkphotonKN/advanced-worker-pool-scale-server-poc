@@ -51,14 +51,17 @@ func (p *Pool) worker(workerNo int) {
 	for job := range p.jobs {
 		result, err := job.Execute()
 
+		fmt.Printf("\nError after executing job: %+v\n\n", err)
+
 		// parse incoming request and pass it to work on the correct service and method
 		jobResultCh := job.GetResultCh()
 
 		if err != nil {
 			jobResultCh <- model.Result{
 				Result: nil,
-				Error:  &err,
+				Error:  err,
 			}
+			return
 		}
 
 		jobResultCh <- model.Result{
@@ -72,7 +75,6 @@ func (p *Pool) worker(workerNo int) {
 * Allows for the queuing of a job onto the job channel.
 **/
 func (p *Pool) Submit(job JobProcessor) error {
-
 	// NOTE: using select pattern here to validate message went through, not to listen to multiple
 	// incoming channels
 	select {

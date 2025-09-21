@@ -42,7 +42,12 @@ func (h *Handler) Create(c *gin.Context) {
 	// listen for result after business logic is done from service.go
 	result := <-job.GetResultCh()
 
-	c.JSON(200, result)
+	if result.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": result.Error.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"statusCode": http.StatusOK, "message": "sucessfully created new product."})
 }
 
 func (h *Handler) Get(c *gin.Context) {

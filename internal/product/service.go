@@ -25,6 +25,17 @@ func NewService(repo Repository) *service {
 
 func (s *service) Create(ctx context.Context, item *Product) error {
 	fmt.Printf("\nRecieved payload from worker: %+v\n\n", item)
+
+	// Validate the product
+	if err := item.Validate(); err != nil {
+		return fmt.Errorf("validation failed: %w", err)
+	}
+
+	// Call repository to persist to database
+	if err := s.repo.Create(ctx, item); err != nil {
+		return fmt.Errorf("failed to create product: %w", err)
+	}
+
 	return nil
 }
 
