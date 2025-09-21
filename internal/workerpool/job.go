@@ -56,10 +56,3 @@ func (j *Job) HandleResult(data interface{}, err error) (interface{}, error) {
 func (j *Job) GetResultCh() chan model.Result {
 	return j.ResultCh
 }
-
-/**
-* Provides cleaner set data that needs to be passed to a service.
-**/
-func (j *Job) SetData(data interface{}) {
-	j.Data = data
-}

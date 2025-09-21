@@ -42,8 +42,22 @@ func (j *ProductJob) Execute() (interface{}, error) {
 
 	switch j.Name {
 	case "create":
-		j.service.Create(j.Context, j.Data)
+		err := j.service.Create(j.Context, j.Data)
+		if err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 
 	return nil, nil
+}
+
+/**
+* Provides cleaner set data that needs to be passed to a service.
+**/
+func (j *ProductJob) SetData(data interface{}) {
+	// assert to back to domain type
+	productData := data.(*Product)
+
+	j.Data = productData
 }
